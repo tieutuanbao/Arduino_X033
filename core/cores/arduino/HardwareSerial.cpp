@@ -30,7 +30,27 @@
 #if defined(UART_MODULE_ENABLED) && !defined(UART_MODULE_ONLY)
 
 
-HardwareSerial::HardwareSerial(void *peripheral)
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+
+void USART1_IRQHandler() {
+  Serial._rx_complete_irq();
+}
+void USART2_IRQHandler() {
+  Serial2._rx_complete_irq();
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+HardwareSerial::HardwareSerial(void *peripheral) :
+    _rx_buffer_head(0), _rx_buffer_tail(0),
+    _tx_buffer_head(0), _tx_buffer_tail(0)
 {
   setHandler(peripheral);
 
@@ -41,8 +61,18 @@ HardwareSerial::HardwareSerial(void *peripheral)
   init(_serial.pin_rx, _serial.pin_tx);
 }
 
+HardwareSerial::HardwareSerial(void *peripheral, PinName _rx, PinName _tx) :
+    _rx_buffer_head(0), _rx_buffer_tail(0),
+    _tx_buffer_head(0), _tx_buffer_tail(0)
+{
+  setHandler(peripheral);
 
-
+  setRx(_rx);
+  
+  setTx(_tx);
+  
+  init(_serial.pin_rx, _serial.pin_tx);
+}
 
 void HardwareSerial::init(PinName _rx, PinName _tx, PinName _rts, PinName _cts)
 {
@@ -55,8 +85,6 @@ void HardwareSerial::init(PinName _rx, PinName _tx, PinName _rts, PinName _cts)
   _serial.pin_rts = _rts;
   _serial.pin_cts = _cts;
 }
-
-
 
 // Public Methods //////////////////////////////////////////////////////////////
 void HardwareSerial::begin(unsigned long baud, byte config)
@@ -147,30 +175,35 @@ void HardwareSerial::end()
 
 int HardwareSerial::available(void)
 {
-  return -1;
+  return ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE;
+  // return -1;
 }
 
 int HardwareSerial::peek(void)
 {
-   return -1;
+  if (_rx_buffer_head == _rx_buffer_tail) {
+    return -1;
+  } else {
+    return _rx_buffer[_rx_buffer_tail];
+  }
 }
 
 int HardwareSerial::read(void)
 {
-
-  unsigned char c;
-  if(uart_getc(&_serial, &c) == 0){
-    return c;
-  }else{
+  // if the head isn't ahead of the tail, we don't have any characters
+  if (_rx_buffer_head == _rx_buffer_tail) {
     return -1;
+  } else {
+    unsigned char c = _rx_buffer[_rx_buffer_tail];
+    _rx_buffer_tail = (rx_buffer_index_t)(_rx_buffer_tail + 1) % SERIAL_RX_BUFFER_SIZE;
+    return c;
   }
 }
 
 
 size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 {
-
-    return  uart_debug_write((uint8_t *)buffer, size);
+  return uart_write(&_serial,(uint8_t *)buffer, size);
 }
 
 
@@ -234,10 +267,21 @@ void HardwareSerial::setRtsCts(PinName _rts, PinName _cts)
 
 void HardwareSerial::setHandler(void *handler)
 {
-   _serial.uart  = (USART_TypeDef *) handler;
+  _serial.uart  = (USART_TypeDef *) handler;
 }
 
+void HardwareSerial::_rx_complete_irq(void) {
+  if(USART_GetITStatus(_serial.uart, USART_IT_RXNE) != RESET)
+  {
+    uint8_t byteRecv = USART_ReceiveData(_serial.uart);
+    rx_buffer_index_t newHead = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
+    if(newHead != _rx_buffer_tail){
+      _rx_buffer[_rx_buffer_head] = byteRecv;
+      _rx_buffer_head = newHead;
+    }
+  }
+}
 
 
 #if defined(HAVE_HWSERIAL1) || defined(HAVE_HWSERIAL2) || defined(HAVE_HWSERIAL3) ||\
@@ -250,7 +294,7 @@ void HardwareSerial::setHandler(void *handler)
   #endif
 
   #if defined(HAVE_HWSERIAL2)
-    HardwareSerial Serial2(USART2);
+    HardwareSerial Serial2(USART2, PA_3, PA_2);
   #endif
 
   #if defined(HAVE_HWSERIAL3)

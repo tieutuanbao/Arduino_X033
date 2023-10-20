@@ -100,24 +100,30 @@ typedef enum {
 
 
 class HardwareSerial : public Stream {
-
-  serial_t _serial;  
+protected:
+    volatile rx_buffer_index_t _rx_buffer_head;
+    volatile rx_buffer_index_t _rx_buffer_tail;
+    volatile tx_buffer_index_t _tx_buffer_head;
+    volatile tx_buffer_index_t _tx_buffer_tail;
+    
+    unsigned char _rx_buffer[SERIAL_RX_BUFFER_SIZE];
+    unsigned char _tx_buffer[SERIAL_TX_BUFFER_SIZE];
 public:
-    HardwareSerial(void *peripheral); 
+    serial_t _serial; 
+    HardwareSerial(void *peripheral);
+    HardwareSerial(void *peripheral, PinName _rx, PinName _tx); 
     
     void begin(unsigned long baud)
     {
       begin(baud, SERIAL_8N1);     //SERIAL_9E1_5  SERIAL_8N1
     }
-    void begin(unsigned long, uint8_t);
+    void begin(unsigned long, byte);
     void end();
 
     virtual int available(void);
     virtual int peek(void);
     virtual int read(void);
 
-
-    
     virtual size_t write(uint8_t);
     inline size_t write(unsigned long n)
     {
@@ -155,6 +161,8 @@ public:
     void setCts(PinName _cts);
     void setRtsCts(PinName _rts, PinName _cts);
     void setHandler(void *handler);
+
+    void _rx_complete_irq(void);
   private:
     uint8_t _config;
     unsigned long _baud;

@@ -9,14 +9,15 @@
 
   #if !defined(HWSERIAL_NONE) && defined(SERIAL_UART_INSTANCE)
 
+    #define ENABLE_HWSERIAL1
+    #define ENABLE_HWSERIAL2
+
     #if SERIAL_UART_INSTANCE == 1
-      #define ENABLE_HWSERIAL1
       #if !defined(Serial)
         #define Serial Serial1
         // #define serialEvent serialEvent1  //reserved
       #endif  
     #elif SERIAL_UART_INSTANCE == 2
-      #define ENABLE_HWSERIAL2
       #if !defined(Serial)
         #define Serial Serial2
         // #define serialEvent serialEvent2

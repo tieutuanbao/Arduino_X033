@@ -267,6 +267,15 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   }
 
   USART_Init(huart->Instance, &(huart->init));
+  USART_ITConfig(huart->Instance, USART_IT_RXNE, ENABLE);
+  
+  NVIC_InitTypeDef  NVIC_InitStructure = {0};
+  NVIC_InitStructure.NVIC_IRQChannel = obj->irq;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+  
   USART_Cmd(huart->Instance, ENABLE);
 }
 
@@ -422,6 +431,16 @@ size_t uart_debug_write(uint8_t *data, uint32_t size)
   {
     while (serial_tx_active(obj)) ;
     USART_SendData(uart_handlers[serial_debug.index]->Instance,*data++);
+  }
+  return size;  //it shouled be 0
+}
+
+size_t uart_write(serial_t *obj, uint8_t *data, uint32_t size) {
+  uint32_t i;
+  for ( i = 0; i < size; i++)
+  {
+    while (serial_tx_active(obj)) ;
+    USART_SendData(obj->uart,*data++);
   }
   return size;  //it shouled be 0
 }
