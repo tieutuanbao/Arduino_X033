@@ -12,14 +12,16 @@
         {
           "name": "Arduino X033",
           "architecture": "ch32x",
-          "version": "1.0.1",
+          "version": "1.0.2",
           "category": "Contributed",
-          "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/core/arduino_core_ch32x_1.0.0.zip",
-          "archiveFileName": "arduino_core_ch32x_1.0.0.zip",
-          "checksum": "SHA-256:18c049a5aa7b39af5b124b78d406f967b163920a57aeb667abd1a117e231153c",
-          "size": "299533",
+          "url": "https://raw.githubusercontent.com/tieutuanbao/Arduino_X033/main/core/arduino_core_ch32x_1.0.2.zip",
+          "archiveFileName": "arduino_core_ch32x_1.0.2.zip",
+          "checksum": "SHA-256:09e56527ca4e6dfea35398560b91356ec8f38af30445d8089ee5a269e29ace09",
+          "size": "295212",
           "boards": [
-            {"name": "Arduino X033"}
+            {
+              "name": "Arduino X033"
+            }
           ],
           "toolsDependencies": [
             {
@@ -34,17 +36,19 @@
             }
           ]
         },
-		{
+        {
           "name": "Arduino X033",
           "architecture": "ch32x",
-          "version": "1.0.0",
+          "version": "1.0.1",
           "category": "Contributed",
           "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/core/arduino_core_ch32x_1.0.0.zip",
           "archiveFileName": "arduino_core_ch32x_1.0.0.zip",
           "checksum": "SHA-256:18c049a5aa7b39af5b124b78d406f967b163920a57aeb667abd1a117e231153c",
           "size": "299533",
           "boards": [
-            {"name": "Arduino X033"}
+            {
+              "name": "Arduino X033"
+            }
           ],
           "toolsDependencies": [
             {
@@ -58,14 +62,40 @@
               "version": "1.0.0"
             }
           ]
-        }		
+        },
+        {
+          "name": "Arduino X033",
+          "architecture": "ch32x",
+          "version": "1.0.0",
+          "category": "Contributed",
+          "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/core/arduino_core_ch32x_1.0.0.zip",
+          "archiveFileName": "arduino_core_ch32x_1.0.0.zip",
+          "checksum": "SHA-256:18c049a5aa7b39af5b124b78d406f967b163920a57aeb667abd1a117e231153c",
+          "size": "299533",
+          "boards": [
+            {
+              "name": "Arduino X033"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "ngohungcuong",
+              "name": "riscv-none-embed-gcc",
+              "version": "8.2.0"
+            },
+            {
+              "packager": "ngohungcuong",
+              "name": "arduino_x033_bootloader",
+              "version": "1.0.0"
+            }
+          ]
+        }
       ],
       "tools": [
         {
           "name": "riscv-none-embed-gcc",
           "version": "8.2.0",
-          "systems":
-          [
+          "systems": [
             {
               "host": "i686-mingw32",
               "url": "https://github.com/NgoHungCuong/riscv-none-elf-gcc-xpack/releases/download/riscv-none-embed-gcc-win-v8.2.0/riscv-none-embed-gcc-win-8.2.0.zip",
@@ -73,14 +103,14 @@
               "checksum": "SHA-256:1887d1b5c0afa087af24b11be7d8217d14da85c1afa53b1d8b59cd2f1ef4f90a",
               "size": "230375674"
             },
-			{
+            {
               "host": "x86_64-pc-linux-gnu",
               "url": "https://github.com/NgoHungCuong/riscv-none-elf-gcc-xpack/releases/download/riscv-none-embed-gcc-linux64-v8.2.0/riscv-none-embed-gcc.tar.gz",
               "archiveFileName": "riscv-none-embed-gcc.tar.gz",
               "checksum": "SHA-256:49249d60d9ab502a0405e4962cdbaf731f621ab21b869cc833f6c9bde2736a98",
               "size": "234117723"
             },
-			{
+            {
               "host": "x86_64-apple-darwin",
               "url": "https://github.com/NgoHungCuong/riscv-none-elf-gcc-xpack/releases/download/riscv-none-embed-gcc-macos-v8.2.0/riscv-none-embed-gcc-macos.tar.gz",
               "archiveFileName": "riscv-none-embed-gcc-macos.tar.gz",
@@ -92,8 +122,7 @@
         {
           "name": "arduino_x033_bootloader",
           "version": "1.0.0",
-          "systems":
-          [
+          "systems": [
             {
               "host": "i686-mingw32",
               "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/bootloader/arduino_x033_bootloader_1.0.0.zip",
@@ -101,14 +130,14 @@
               "checksum": "SHA-256:38849799bf9950acc9df7a737259ec7384afae0ab6ba93bfd20630b7f874a8c1",
               "size": "120849"
             },
-			{
+            {
               "host": "x86_64-pc-linux-gnu",
               "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/bootloader/arduino_x033_bootloader.tar.gz",
               "archiveFileName": "arduino_x033_bootloader.tar.gz",
               "checksum": "SHA-256:75c0f356583f0215d24024c64de528e93186a4945557441da218cd2a05cf6fde",
               "size": "6961"
             },
-			{
+            {
               "host": "x86_64-apple-darwin",
               "url": "https://raw.githubusercontent.com/NgoHungCuong/Arduino_X033/main/bootloader/arduino_x033_bootloader_macos.tar.gz",
               "archiveFileName": "arduino_x033_bootloader_macos.tar.gz",
@@ -121,4 +150,3 @@
     }
   ]
 }
-
