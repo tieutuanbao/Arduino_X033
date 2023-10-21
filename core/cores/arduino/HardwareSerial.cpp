@@ -38,10 +38,10 @@ void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 void USART1_IRQHandler() {
-  Serial._rx_complete_irq();
+  Serial._uart_irq();
 }
 void USART2_IRQHandler() {
-  Serial2._rx_complete_irq();
+  Serial2._uart_irq();
 }
 
 #ifdef __cplusplus
@@ -49,28 +49,22 @@ void USART2_IRQHandler() {
 #endif
 
 HardwareSerial::HardwareSerial(void *peripheral) :
-    _rx_buffer_head(0), _rx_buffer_tail(0),
-    _tx_buffer_head(0), _tx_buffer_tail(0)
+    _rx_buffer_head(0), _rx_buffer_tail(0)
 {
   setHandler(peripheral);
-
-  setRx(PIN_SERIAL_RX);
-  
-  setTx(PIN_SERIAL_TX);
-  
+  setTimeout(5);
+  setRx(PIN_SERIAL_RX);  
+  setTx(PIN_SERIAL_TX);  
   init(_serial.pin_rx, _serial.pin_tx);
 }
 
 HardwareSerial::HardwareSerial(void *peripheral, PinName _rx, PinName _tx) :
-    _rx_buffer_head(0), _rx_buffer_tail(0),
-    _tx_buffer_head(0), _tx_buffer_tail(0)
+    _rx_buffer_head(0), _rx_buffer_tail(0)
 {
   setHandler(peripheral);
-
-  setRx(_rx);
-  
-  setTx(_tx);
-  
+  setTimeout(5);
+  setRx(_rx);  
+  setTx(_tx);  
   init(_serial.pin_rx, _serial.pin_tx);
 }
 
@@ -200,7 +194,6 @@ int HardwareSerial::read(void)
   }
 }
 
-
 size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 {
   return uart_write(&_serial,(uint8_t *)buffer, size);
@@ -270,19 +263,18 @@ void HardwareSerial::setHandler(void *handler)
   _serial.uart  = (USART_TypeDef *) handler;
 }
 
-void HardwareSerial::_rx_complete_irq(void) {
+void HardwareSerial::_uart_irq(void) {
   if(USART_GetITStatus(_serial.uart, USART_IT_RXNE) != RESET)
   {
     uint8_t byteRecv = USART_ReceiveData(_serial.uart);
     rx_buffer_index_t newHead = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
-    if(newHead != _rx_buffer_tail){
+    if(newHead != _rx_buffer_tail) {
       _rx_buffer[_rx_buffer_head] = byteRecv;
       _rx_buffer_head = newHead;
     }
   }
 }
-
 
 #if defined(HAVE_HWSERIAL1) || defined(HAVE_HWSERIAL2) || defined(HAVE_HWSERIAL3) ||\
   defined(HAVE_HWSERIAL4) || defined(HAVE_HWSERIAL5) || defined(HAVE_HWSERIAL6) ||\

@@ -96,6 +96,7 @@ typedef struct __UART_HandleTypeDef
 
   size_t uart_debug_write(uint8_t *data, uint32_t size);
   size_t uart_write(serial_t *obj, uint8_t *data, uint32_t size);
+  size_t uart_writeByte(serial_t *obj, uint8_t data);
 
 #else
 

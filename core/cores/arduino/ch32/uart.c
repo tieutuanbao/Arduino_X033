@@ -439,10 +439,18 @@ size_t uart_write(serial_t *obj, uint8_t *data, uint32_t size) {
   uint32_t i;
   for ( i = 0; i < size; i++)
   {
-    while (serial_tx_active(obj)) ;
-    USART_SendData(obj->uart,*data++);
+    USART_SendData(obj->uart,*data);
+    while ( USART_GetFlagStatus(obj->uart, USART_FLAG_TXE) == RESET );
+    data++;
   }
+  while ( USART_GetFlagStatus(obj->uart, USART_FLAG_TC) == RESET ); 
   return size;  //it shouled be 0
+}
+
+size_t uart_writeByte(serial_t *obj, uint8_t data) {
+  USART_SendData(obj->uart, data);
+  while ( USART_GetFlagStatus(uart_handlers[obj->index]->Instance, USART_FLAG_TXE) != RESET ); 
+  return 1;
 }
 
 /**
